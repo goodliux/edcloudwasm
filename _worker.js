@@ -14,15 +14,15 @@ const ssAeadPassword = ''; // 可在环境变量配置，变量名称为SSPASS
 // ---------------------------------------------------------------------------------
 /** 缓冲区最大大小。*/
 /**- **警告**: 大小为maxChunkLen的整数倍使用率最高，不然会有空间浪费。*/
-const bufferSize = 512 * 1024;         // 512KB
+const bufferSize = 128 * 1024;         // 128KB
 /** 开启限速缓存模式的大包流量阈值。*/
 const startThreshold = 50 * 1024 * 1024; //50MB
 /** 从TCP读取的数据块最大大小，改小会成倍增加传输相同流量的cpu开销，同时会因为写满而增加数据进入缓冲区限速的概率*/
 /**- **警告**: 大小必须为2的幂，设置到大于64KB后只会写满写64KB*/
 /**- **警告**: 免费worker设置64KB时传输相同流量cpu开销最低。*/
-const maxChunkLen = 64 * 1024;        // 64KB
+const maxChunkLen = 16 * 1024;        // 16KB
 /** 进入缓冲模式时的缓冲区发送的触发时间。*/
-const flushTime = 10;                 // 10ms
+const flushTime = 1;                 // 1ms
 // ---------------------------------------------------------------------------------
 /** SS AEAD加密时每批并发处理的payload分片数量，length加密开销低，会随payload一起提交。*/
 const ssAeadEncryptCount = 4;
@@ -35,24 +35,30 @@ const urlParamCacheLimit = 20;//URL参数解析结果缓存条数
 //五者的socket获取顺序，全局模式下为这五个的顺序，非全局为：直连>socks>http>https>turn>nat64>proxyip>finallyProxyHost
 const proxyStrategyOrder = ['socks', 'http', 'https', 'turn', 'nat64'];
 const sharedEchDns = 'lido.fi+https://223.5.5.5/dns-query'; //ECHDNS配置
-const dohEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/dns-query'];
-const dohNatEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve'];
-const proxyIpAddrs = {EU: 'ProxyIP.DE.CMLiussss.net', AS: 'ProxyIP.SG.CMLiussss.net', JP: 'ProxyIP.JP.CMLiussss.net', US: 'ProxyIP.US.CMLiussss.net'};//分区域proxyip
+const dohEndpoints = ['https://1.1.1.1/dns-query', 'https://1.0.0.1/dns-query'];
+const dohNatEndpoints = ['https://1.1.1.1/dns-query', 'https://1.0.0.1/dns-query'];
+const proxyIpAddrs = {CN: 'ProxyIP.HK.CMLiussss.net', SG: 'ProxyIP.SG.CMLiussss.net', JP: 'ProxyIP.JP.CMLiussss.net', KR: 'ProxyIP.KR.CMLiussss.net', IN: 'ProxyIP.IN.CMLiussss.net', GB: 'ProxyIP.GB.CMLiussss.net', FR: 'ProxyIP.FR.CMLiussss.net', DE: 'ProxyIP.DE.CMLiussss.net', NL: 'ProxyIP.NL.CMLiussss.net', SE: 'ProxyIP.SE.CMLiussss.net', FI: 'ProxyIP.FI.CMLiussss.net', PL: 'ProxyIP.PL.CMLiussss.net', RU: 'ProxyIP.RU.CMLiussss.net', CH: 'ProxyIP.CH.CMLiussss.net', LV: 'ProxyIP.LV.CMLiussss.net', US: 'ProxyIP.US.CMLiussss.net', CA: 'ProxyIP.CA.CMLiussss.net'};//分区域proxyip
 const finallyProxyHost = 'ProxyIP.CMLiussss.net';//兜底proxyip
 // 订阅和面板使用的优选ip地址，可支持ip:port#name格式
 const ipListAll = ["172.64.154.125", "104.18.39.123", "172.64.145.18", "104.18.42.218", "104.18.33.131", "172.64.145.38", "172.64.145.202", "104.18.42.151"];
 const coloRegions = {
-    JP: new Set(['FUK', 'ICN', 'KIX', 'NRT', 'OKA']),
-    EU: new Set([
-        'ACC', 'ADB', 'ALA', 'ALG', 'AMM', 'AMS', 'ARN', 'ATH', 'BAH', 'BCN', 'BEG', 'BGW', 'BOD', 'BRU', 'BTS', 'BUD', 'CAI',
-        'CDG', 'CPH', 'CPT', 'DAR', 'DKR', 'DMM', 'DOH', 'DUB', 'DUR', 'DUS', 'DXB', 'EBB', 'EDI', 'EVN', 'FCO', 'FRA', 'GOT',
-        'GVA', 'HAM', 'HEL', 'HRE', 'IST', 'JED', 'JIB', 'JNB', 'KBP', 'KEF', 'KWI', 'LAD', 'LED', 'LHR', 'LIS', 'LOS', 'LUX',
-        'LYS', 'MAD', 'MAN', 'MCT', 'MPM', 'MRS', 'MUC', 'MXP', 'NBO', 'OSL', 'OTP', 'PMO', 'PRG', 'RIX', 'RUH', 'RUN', 'SKG',
-        'SOF', 'STR', 'TBS', 'TLL', 'TLV', 'TUN', 'VIE', 'VNO', 'WAW', 'ZAG', 'ZRH']),
-    AS: new Set([
-        'ADL', 'AKL', 'AMD', 'BKK', 'BLR', 'BNE', 'BOM', 'CBR', 'CCU', 'CEB', 'CGK', 'CMB', 'COK', 'DAC', 'DEL', 'HAN', 'HKG',
-        'HYD', 'ISB', 'JHB', 'JOG', 'KCH', 'KHH', 'KHI', 'KTM', 'KUL', 'LHE', 'MAA', 'MEL', 'MFM', 'MLE', 'MNL', 'NAG', 'NOU',
-        'PAT', 'PBH', 'PER', 'PNH', 'SGN', 'SIN', 'SYD', 'TPE', 'ULN', 'VTE'])
+    CN: new Set(['HKG', 'MFM', 'KHH', 'TPE']), // 中国
+    SG: new Set(['SIN']), // 新加坡
+    JP: new Set(['FUK', 'OKA', 'KIX', 'NRT']), // 日本
+    KR: new Set(['ICN']), // 韩国
+    IN: new Set(['AMD', 'BLR', 'IXC', 'MAA', 'HYD', 'CNN', 'KNU', 'COK', 'CCU', 'BOM', 'NAG', 'DEL', 'PAT']), // 印度
+    GB: new Set(['EDI', 'LHR', 'MAN']), // 英国
+    FR: new Set(['BOD', 'LYS', 'MRS', 'CDG', 'RUN']), // 法国
+    DE: new Set(['TXL', 'DUS', 'FRA', 'HAM', 'MUC', 'STR']), // 德国
+    NL: new Set(['AMS']), // 荷兰
+    SE: new Set(['GOT', 'ARN']), // 瑞典
+    FI: new Set(['HEL']), // 芬兰
+    PL: new Set(['WAW', 'WRO']), // 波兰
+    RU: new Set(['KJA', 'DME', 'LED', 'SVX']), // 俄罗斯
+    CH: new Set(['GVA', 'ZRH']), // 瑞士
+    LV: new Set(['RIX']), // 拉脱维亚
+    US: new Set(['ABQ', 'ANC', 'ATL', 'AUS', 'BGR', 'BOS', 'BUF', 'CLT', 'ORD', 'CMH', 'DFW', 'DEN', 'DTW', 'RDU', 'HNL', 'IAH', 'IND', 'JAX', 'MCI', 'LAS', 'LAX', 'MFE', 'MEM', 'MIA', 'MSP', 'MGM', 'BNA', 'EWR', 'OKC', 'OMA', 'PHL', 'PHX', 'PIT', 'PDX', 'RIC', 'SMF', 'SLC', 'SAT', 'SAN', 'SFO', 'SJC', 'SEA', 'FSD', 'STL', 'TLH', 'TPA', 'IAD']), // 美国
+    CA: new Set(['YYC', 'YHZ', 'YUL', 'YOW', 'YXE', 'YYZ', 'YVR', 'YWG']) // 加拿大
 };
 const coloToProxyMap = new Map();
 for (const [region, colos] of Object.entries(coloRegions)) {for (const colo of colos) coloToProxyMap.set(colo, proxyIpAddrs[region])}
