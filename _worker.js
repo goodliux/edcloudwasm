@@ -37,22 +37,28 @@ const proxyStrategyOrder = ['socks', 'http', 'https', 'turn', 'nat64'];
 const sharedEchDns = 'lido.fi+https://223.5.5.5/dns-query'; //ECHDNS配置
 const dohEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/dns-query'];
 const dohNatEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve'];
-const proxyIpAddrs = {EU: 'ProxyIP.DE.CMLiussss.net', AS: 'ProxyIP.SG.CMLiussss.net', JP: 'ProxyIP.JP.CMLiussss.net', US: 'ProxyIP.US.CMLiussss.net'};//分区域proxyip
+const proxyIpAddrs = {CN: 'ProxyIP.HK.CMLiussss.net', SG: 'ProxyIP.SG.CMLiussss.net', JP: 'ProxyIP.JP.CMLiussss.net', KR: 'ProxyIP.KR.CMLiussss.net', IN: 'ProxyIP.IN.CMLiussss.net', GB: 'ProxyIP.GB.CMLiussss.net', FR: 'ProxyIP.FR.CMLiussss.net', DE: 'ProxyIP.DE.CMLiussss.net', NL: 'ProxyIP.NL.CMLiussss.net', SE: 'ProxyIP.SE.CMLiussss.net', FI: 'ProxyIP.FI.CMLiussss.net', PL: 'ProxyIP.PL.CMLiussss.net', RU: 'ProxyIP.RU.CMLiussss.net', CH: 'ProxyIP.CH.CMLiussss.net', LV: 'ProxyIP.LV.CMLiussss.net', US: 'ProxyIP.US.CMLiussss.net', CA: 'ProxyIP.CA.CMLiussss.net'};//分区域proxyip
 const finallyProxyHost = 'ProxyIP.CMLiussss.net';//兜底proxyip
 // 订阅和面板使用的优选ip地址，可支持ip:port#name格式
 const ipListAll = ["172.64.154.125", "104.18.39.123", "172.64.145.18", "104.18.42.218", "104.18.33.131", "172.64.145.38", "172.64.145.202", "104.18.42.151"];
 const coloRegions = {
-    JP: new Set(['FUK', 'ICN', 'KIX', 'NRT', 'OKA']),
-    EU: new Set([
-        'ACC', 'ADB', 'ALA', 'ALG', 'AMM', 'AMS', 'ARN', 'ATH', 'BAH', 'BCN', 'BEG', 'BGW', 'BOD', 'BRU', 'BTS', 'BUD', 'CAI',
-        'CDG', 'CPH', 'CPT', 'DAR', 'DKR', 'DMM', 'DOH', 'DUB', 'DUR', 'DUS', 'DXB', 'EBB', 'EDI', 'EVN', 'FCO', 'FRA', 'GOT',
-        'GVA', 'HAM', 'HEL', 'HRE', 'IST', 'JED', 'JIB', 'JNB', 'KBP', 'KEF', 'KWI', 'LAD', 'LED', 'LHR', 'LIS', 'LOS', 'LUX',
-        'LYS', 'MAD', 'MAN', 'MCT', 'MPM', 'MRS', 'MUC', 'MXP', 'NBO', 'OSL', 'OTP', 'PMO', 'PRG', 'RIX', 'RUH', 'RUN', 'SKG',
-        'SOF', 'STR', 'TBS', 'TLL', 'TLV', 'TUN', 'VIE', 'VNO', 'WAW', 'ZAG', 'ZRH']),
-    AS: new Set([
-        'ADL', 'AKL', 'AMD', 'BKK', 'BLR', 'BNE', 'BOM', 'CBR', 'CCU', 'CEB', 'CGK', 'CMB', 'COK', 'DAC', 'DEL', 'HAN', 'HKG',
-        'HYD', 'ISB', 'JHB', 'JOG', 'KCH', 'KHH', 'KHI', 'KTM', 'KUL', 'LHE', 'MAA', 'MEL', 'MFM', 'MLE', 'MNL', 'NAG', 'NOU',
-        'PAT', 'PBH', 'PER', 'PNH', 'SGN', 'SIN', 'SYD', 'TPE', 'ULN', 'VTE'])
+    CN: new Set(['HKG', 'MFM', 'KHH', 'TPE']), // 中国
+    SG: new Set(['SIN']), // 新加坡
+    JP: new Set(['FUK', 'OKA', 'KIX', 'NRT']), // 日本
+    KR: new Set(['ICN']), // 韩国
+    IN: new Set(['AMD', 'BLR', 'IXC', 'MAA', 'HYD', 'CNN', 'KNU', 'COK', 'CCU', 'BOM', 'NAG', 'DEL', 'PAT']), // 印度
+    GB: new Set(['EDI', 'LHR', 'MAN']), // 英国
+    FR: new Set(['BOD', 'LYS', 'MRS', 'CDG', 'RUN']), // 法国
+    DE: new Set(['TXL', 'DUS', 'FRA', 'HAM', 'MUC', 'STR']), // 德国
+    NL: new Set(['AMS']), // 荷兰
+    SE: new Set(['GOT', 'ARN']), // 瑞典
+    FI: new Set(['HEL']), // 芬兰
+    PL: new Set(['WAW', 'WRO']), // 波兰
+    RU: new Set(['KJA', 'DME', 'LED', 'SVX']), // 俄罗斯
+    CH: new Set(['GVA', 'ZRH']), // 瑞士
+    LV: new Set(['RIX']), // 拉脱维亚
+    US: new Set(['ABQ', 'ANC', 'ATL', 'AUS', 'BGR', 'BOS', 'BUF', 'CLT', 'ORD', 'CMH', 'DFW', 'DEN', 'DTW', 'RDU', 'HNL', 'IAH', 'IND', 'JAX', 'MCI', 'LAS', 'LAX', 'MFE', 'MEM', 'MIA', 'MSP', 'MGM', 'BNA', 'EWR', 'OKC', 'OMA', 'PHL', 'PHX', 'PIT', 'PDX', 'RIC', 'SMF', 'SLC', 'SAT', 'SAN', 'SFO', 'SJC', 'SEA', 'FSD', 'STL', 'TLH', 'TPA', 'IAD']), // 美国
+    CA: new Set(['YYC', 'YHZ', 'YUL', 'YOW', 'YXE', 'YYZ', 'YVR', 'YWG']) // 加拿大
 };
 const coloToProxyMap = new Map();
 for (const [region, colos] of Object.entries(coloRegions)) {for (const colo of colos) coloToProxyMap.set(colo, proxyIpAddrs[region])}
@@ -1590,15 +1596,23 @@ const manualPipe = async (readable, writable, close, speed) => {
                 offset > safeBufferSize && (totalBytes > pipeStartThreshold ? await new Promise(r => resume = r) : flushBuffer());
             }
         }
-    } catch {offset = 0, close?.()} finally {isReading = false, flushBuffer()}
+    } catch {offset = 0, close?.()} finally {
+        isReading = false;
+        try { flushBuffer(); } catch {}
+        // 释放大文件传输期间可能长期引用的 ArrayBuffer，避免128MiB Worker堆积
+        bufferView = null;
+        spareBuffer = null;
+        resume = null;
+        if (timerId) { clearTimeout(timerId); timerId = null; }
+    }
 };
 const createBufferedTcpWriter = (tcpWriter, close) => {
-    const queue = new Array(2048);
+    const queue = new Array(256);
     let head = 0, tail = 0, size = 0, coalesceBuffer = null, drainActive = false, closed = false;
     const closeWriter = () => {
         if (closed) return;
         closed = true;
-        for (let i = 0; i < 2048; i++) queue[i] = null;
+        for (let i = 0; i < 256; i++) queue[i] = null;
         close?.();
     };
     const drainQueue = async () => {
@@ -1607,7 +1621,7 @@ const createBufferedTcpWriter = (tcpWriter, close) => {
             while (size > 0 && !closed) {
                 let chunk = queue[head];
                 if (chunk.byteLength >= maxChunkLen) {
-                    queue[head] = null, head = (head + 1) & 2047, size--;
+                    queue[head] = null, head = (head + 1) & 255, size--;
                     await tcpWriter.write(chunk);
                     continue;
                 }
@@ -1617,7 +1631,7 @@ const createBufferedTcpWriter = (tcpWriter, close) => {
                     chunk = queue[head];
                     if (mergedLength + chunk.byteLength > maxChunkLen) break;
                     coalesceBuffer.set(chunk, mergedLength), mergedLength += chunk.byteLength;
-                    queue[head] = null, head = (head + 1) & 2047, size--;
+                    queue[head] = null, head = (head + 1) & 255, size--;
                 }
                 if (mergedLength > 0) await tcpWriter.write(coalesceBuffer.subarray(0, mergedLength));
             }
@@ -1627,18 +1641,18 @@ const createBufferedTcpWriter = (tcpWriter, close) => {
         if (closed) return;
         const data = chunk.constructor === Uint8Array ? chunk : new Uint8Array(chunk);
         if (!data.byteLength) return;
-        if (size === 2048) return closeWriter();
-        queue[tail] = data, tail = (tail + 1) & 2047, size++;
+        if (size === 256) return closeWriter();
+        queue[tail] = data, tail = (tail + 1) & 255, size++;
         if (!drainActive) drainActive = true, queueMicrotask(drainQueue);
     };
 };
 const createAsyncMicrotaskQueue = (consume, close) => {
-    const queue = new Array(1024);
+    const queue = new Array(256);
     let head = 0, tail = 0, size = 0, drainActive = false, closed = false;
     const closeQueue = () => {
         if (closed) return;
         closed = true;
-        for (let i = 0; i < 1024; i++) queue[i] = null;
+        for (let i = 0; i < 256; i++) queue[i] = null;
         close?.();
     };
     const drainQueue = async () => {
@@ -1646,15 +1660,15 @@ const createAsyncMicrotaskQueue = (consume, close) => {
         try {
             while (size > 0 && !closed) {
                 const chunk = queue[head];
-                queue[head] = null, head = (head + 1) & 1023, size--;
+                queue[head] = null, head = (head + 1) & 255, size--;
                 await consume(chunk);
             }
         } catch {closeQueue()} finally {drainActive = false}
     };
     return chunk => {
         if (closed) return;
-        if (size === 1024) return closeQueue();
-        queue[tail] = chunk, tail = (tail + 1) & 1023, size++;
+        if (size === 256) return closeQueue();
+        queue[tail] = chunk, tail = (tail + 1) & 255, size++;
         if (!drainActive) drainActive = true, queueMicrotask(drainQueue);
     };
 };
