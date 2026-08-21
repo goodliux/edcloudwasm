@@ -21,7 +21,7 @@ const startThreshold = 50 * 1024 * 1024; //50MB
 /** 从TCP读取的数据块最大大小，改小会成倍增加传输相同流量的cpu开销，同时会因为写满而增加数据进入缓冲区限速的概率*/
 /**- **警告**: 大小必须为2的幂，设置到大于64KB后只会写满写64KB*/
 /**- **警告**: 免费worker设置64KB时传输相同流量cpu开销最低。*/
-const maxChunkLen = 64 * 1024;        // 64KB
+const maxChunkLen = 128 * 1024;        // 128KB
 /** 进入缓冲模式时的缓冲区发送的触发时间。*/
 const flushTime = 4;                 // 4ms
 // ---------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ const urlParamCacheLimit = 20;//URL参数解析结果缓存条数
 //出站socket获取顺序，全局模式下按数组顺序，非全局为：直连>socks>http>https>sstp>turn>turns>nat64>proxyip>finallyProxyHost
 const proxyStrategyOrder = ['socks', 'http', 'https', 'sstp', 'turn', 'turns', 'nat64'];
 const sharedEchDns = 'lido.fi+https://223.5.5.5/dns-query'; //ECHDNS配置
-const dohEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/dns-query'];
-const dohNatEndpoints = ['https://cloudflare-dns.com/dns-query', 'https://dns.google/resolve'];
+const dohEndpoints = ['https://1.1.1.1/dns-query', 'https://1.0.0.1/dns-query'];
+const dohNatEndpoints = ['https://1.1.1.1/dns-query', 'https://1.0.0.1/dns-query'];
 const finallyProxyHost = 'proxy.zjcloud.us.ci';//兜底proxyip
 // 订阅和面板使用的优选ip地址，可支持ip:port#name格式
 const ipListAll = ["172.64.154.125", "104.18.39.123", "172.64.145.18", "104.18.42.218", "104.18.33.131", "172.64.145.38", "172.64.145.202", "104.18.42.151"];
@@ -46,7 +46,7 @@ let currentColo = null;
 const getCurrentColo = async () => {
     if (currentColo !== null) return currentColo;
     try {
-        const text = await fetch('https://cp.cloudflare.com/cdn-cgi/trace', {
+        const text = await fetch('https://1.1.1.1/cdn-cgi/trace', {
             headers: {'User-Agent': 'Mozilla/5.0'}
         }).then(r => r.text());
         const i = text.indexOf('colo=');
@@ -1552,7 +1552,7 @@ const manualPipe = async (readable, writable, close, speed) => {
             if (needsFlush || chunkLen < 2048) {
                 flushBuffer();
             } else {
-                if (fastFlush || chunkLen < 28672) {
+                if (fastFlush || chunkLen < 61440) {
                     if (!speedLimit) totalBytes = 0;
                     time = 2;
                 } else if (totalBytes > pipeStartThreshold) time = pipeFlushTime;
@@ -1844,7 +1844,8 @@ export default {
         if (request.method === 'POST' && request.headers.get('content-type') === 'application/grpc-web') return handleXwebPost(request);
         if (request.headers.get('Upgrade') === 'websocket') {
             const {0: clientSocket, 1: webSocket} = new WebSocketPair();
-            webSocket.accept({allowHalfOpen: true}), webSocket.binaryType = "arraybuffer";
+            webSocket.binaryType = "arraybuffer";
+            webSocket.accept({ allowHalfOpen: true });
             handleWebSocketConn(webSocket, request);
             return new Response(null, {status: 101, webSocket: clientSocket});
         }
