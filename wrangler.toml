@@ -1,6 +1,7 @@
 name = "edcloudwasm"
 main = "_worker.js"  # 你的 JS 逻辑代码
 compatibility_date = "2026-09-10"
+compatibility_flags = [ "no_websocket_standard_binary_type", "web_socket_manual_reply_to_close", "websocket_close_reason_byte_limit", "internal_stream_byob_return_view", "web_socket_compression", "streams_byob_reader_detaches_buffer", "queue_consumer_no_wait_for_wait_until" ]
 keep_vars = true
 minify = true
 # pages中环境变量需要手动填写并重试部署才会生效，worker环境变量和路由自定义域名这些建议直接使用wrangler.toml文件来配置
@@ -16,9 +17,10 @@ SSPASS = "666"
 S5HTTPUSER = "admin"
 # S5和HTTP入站验证密码
 S5HTTPPASS = "123456"
-# 付费worker 可设置cpu时间限制
+# 付费worker 可设置最大cpu时间和最大子请求数的限制
 [limits]
-cpu_ms = 300000
+cpu_ms = 300_000
+subrequests = 10_000_000
 
 [observability]
 enabled = false
@@ -36,5 +38,5 @@ persist = true
 head_sampling_rate = 1
 [[rules]]
 type = "CompiledWasm"
-globs = ["**/*.wasm"]
+globs = [ "**/*.wasm" ]
 fallthrough = true

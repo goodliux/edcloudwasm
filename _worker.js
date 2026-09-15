@@ -21,7 +21,7 @@ const startThreshold = 50 * 1024 * 1024; //50MB
 /** 从TCP读取的数据块最大大小，改小会成倍增加传输相同流量的cpu开销，同时会因为写满而增加数据进入缓冲区限速的概率*/
 /**- **警告**: 大小必须为2的幂，设置到大于64KB后只会写满写64KB*/
 /**- **警告**: 免费worker设置64KB时传输相同流量cpu开销最低。*/
-const maxChunkLen = 64 * 1024;        // 64KB
+const maxChunkLen = 128 * 1024;        // 128KB
 /** 进入缓冲模式时的缓冲区发送的触发时间。*/
 const flushTime = 4;                 // 4ms
 // ---------------------------------------------------------------------------------
@@ -534,7 +534,7 @@ const tlsStreamAdapter = (tls, initial = new Uint8Array(0)) => {
     };
     const readNext = async () => leftOver ? (d => (leftOver = null, d))(leftOver) : tls.read();
     const readable = new ReadableStream({
-        type: 'bytes', autoAllocateChunkSize: 65536,
+        type: 'bytes', autoAllocateChunkSize: 131072,
         async pull(c) {
             if (closed) return;
             try {
@@ -663,7 +663,7 @@ const createSstpSession = (username, password) => {
     const userBytes = textEncoder.encode(username), passBytes = textEncoder.encode(password);
     if (!userBytes.length || !passBytes.length || userBytes.length > 255 || passBytes.length > 255) throw new Error('Invalid SSTP credentials');
     let buffered = sstpEmpty, packetId = 1, socket = null, reader = null, writer = null, serverHost = '', serverPort = 443;
-    let readBuffer = new ArrayBuffer(65536), writeQueue = Promise.resolve(), closed = false;
+    let readBuffer = new ArrayBuffer(131072), writeQueue = Promise.resolve(), closed = false;
     const readMore = async () => {
         if (closed || !reader) throw new Error('SSTP socket is closed');
         const saved = buffered.length ? new Uint8Array(buffered) : null;
@@ -1528,7 +1528,7 @@ const manualPipe = async (readable, writable, close, speed) => {
     if (speedLimit) {
         pipeStartThreshold = n > 256 ? Number.MAX_SAFE_INTEGER : n * 1048576;
         let bestSize = pipeBufferSize, bestTime = Infinity, bestDiff = Infinity;
-        for (let size = 262144; size <= 524288; size += 65536) {
+        for (let size = 262144; size <= 524288; size += 131072) {
             const timeMs = Math.max(2, Math.round(size * 1000 / pipeStartThreshold)), diff = Math.abs(size * 1000 / timeMs - pipeStartThreshold);
             if (diff < bestDiff || (diff === bestDiff && timeMs < bestTime)) bestSize = size, bestTime = timeMs, bestDiff = diff;
         }
@@ -1846,7 +1846,8 @@ export default {
         if (request.method === 'POST' && request.headers.get('content-type')?.startsWith('application/grpc')) return handleXwebPost(request);
         if (request.headers.get('Upgrade') === 'websocket') {
             const {0: clientSocket, 1: webSocket} = new WebSocketPair();
-            webSocket.accept({allowHalfOpen: true}), webSocket.binaryType = "arraybuffer";
+            webSocket.binaryType = "arraybuffer";
+            webSocket.accept({ allowHalfOpen: true });
             handleWebSocketConn(webSocket, request);
             return new Response(null, {status: 101, webSocket: clientSocket});
         }
